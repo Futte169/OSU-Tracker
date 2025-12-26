@@ -6,8 +6,8 @@ import os
 # ==============================
 # CONFIG
 # ==============================
-CLIENT_ID = "47042"
-CLIENT_SECRET = "2PPi45GCXx547ScpskA7MCXiuQ9JgT78GAaKsp8v"
+CLIENT_ID = ""
+CLIENT_SECRET = ""
 MODE = "osu"
 
 START_PAGE = 1   
