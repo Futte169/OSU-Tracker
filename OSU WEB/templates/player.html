@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div style="background: rgba(37, 37, 45, 0.6); border-radius: 20px; padding: 30px; margin-bottom: 30px; border: 1px solid #333; display: flex; align-items: center; gap: 30px; margin-top: 20px;">
+        
+        {% if scores %}
+        <div style="position: relative;">
+            <img src="https://a.ppy.sh/{{ scores[0].user_id }}" 
+                 style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--osu-pink); box-shadow: 0 0 20px rgba(255, 102, 170, 0.2);"
+                 onerror="this.src='https://osu.ppy.sh/images/layout/avatar-guest.png';">
+        </div>
+        {% endif %}
+
+        <div style="flex-grow: 1;">
+            <h1 style="margin: 0; font-size: 2.5em;">{{ t('home_title') if lang == 'en' else 'Profil for' }} {{ username }}</h1>
+            <p style="color: #aaa; margin: 5px 0;">
+                {{ t('specialist_in') }} 
+                <span style="color: var(--osu-pink);">{{ scores|length }}</span> 
+                {{ t('unique_categories') }}
+            </p>
+            
+            <div style="margin-top: 15px;">
+                {% if scores %}
+                <a href="https://osu.ppy.sh/users/{{ scores[0].user_id }}" 
+                   target="_blank" 
+                   class="btn-official" 
+                   style="background: var(--osu-pink); color: white; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 0.85em; display: inline-block;">
+                   {{ t('official_profile') }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="menu" style="margin-bottom: 30px;">
+        <a href="javascript:history.back()" style="background: #383847; border-left: 4px solid var(--osu-pink);">{{ t('go_back') }}</a>
+        <a href="/">{{ t('home_title') }}</a>
+        <a href="/leaderboard/OVERALL">{{ t('all_leaderboards') }}</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 80px;">{{ t('global_rank') }}</th> 
+                <th>{{ t('category') }}</th>
+                <th>PP</th>
+                <th>{{ t('accuracy') }}</th>
+                <th>Mods</th>
+                <th style="text-align: left;">{{ t('beatmap') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in scores %}
+            <tr class="leaderboard-row" 
+                style="background-image: linear-gradient(to right, rgba(26,26,34,1) 0%, rgba(26,26,34,0.8) 25%, rgba(26,26,34,0.4) 100%), 
+                url('https://assets.ppy.sh/beatmaps/{{ s.beatmapset_id if s.beatmapset_id else s.beatmap_id }}/covers/cover@2x.jpg');">
+                
+                <td class="rank-cell" style="font-weight: bold; text-align: center; padding: 15px 10px;">
+                    {% if s.global_rank == 1 %}
+                        <span style="color: #FFD700; font-size: 1.2em; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);">#1</span>
+                    {% elif s.global_rank == 2 %}
+                        <span style="color: #C0C0C0;">#2</span>
+                    {% elif s.global_rank == 3 %}
+                        <span style="color: #CD7F32;">#3</span>
+                    {% else %}
+                        <span style="color: #aaa;">#{{ s.global_rank }}</span>
+                    {% endif %}
+                </td>
+
+                <td style="font-weight: bold; color: var(--osu-pink);">{{ s.category }}</td>
+                <td class="pp" style="font-weight: bold;">{{ "%.2f"|format(s.pp) }}</td>
+                <td class="acc">{{ "%.2f"|format(s.acc) }}%</td>
+                <td class="mods-container-cell">
+                    <div class="mods-container">
+                        {% if s.mods and s.mods != "NM" %}
+                            {% for i in range(0, s.mods|length, 2) %}
+                                {% set mod = s.mods[i:i+2]|lower %}
+                                <img src="{{ url_for('static', filename='mods/' + mod + '.png') }}" class="mod-icon">
+                            {% endfor %}
+                        {% else %}
+                            <img src="{{ url_for('static', filename='mods/nomod.png') }}" class="mod-icon">
+                        {% endif %}
+                    </div>
+                </td>
+                <td class="map">
+                    <a href="https://osu.ppy.sh/b/{{ s.beatmap_id }}" target="_blank">{{ s.map }}</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not scores %}
+    <p style="margin-top: 50px; color: #666;">{{ t('no_scores_player') }}</p>
+    {% endif %}
+
+    <style>
+        .btn-official:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 102, 170, 0.3);
+            transition: 0.3s ease;
+        }
+        .leaderboard-row:hover {
+            filter: saturate(1.2);
+            transition: 0.2s ease;
+        }
+    </style>
+{% endblock %}

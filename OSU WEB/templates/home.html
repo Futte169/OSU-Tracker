@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <header style="text-align: center; margin-bottom: 50px; padding-top: 20px;">
+        <h1 style="font-size: 3.5em; margin-bottom: 10px;">osu! <span style="color: var(--osu-pink);">Specialist</span> Bank</h1>
+        <p style="color: #aaa; font-size: 1.2em;">{{ t('welcome_subtitle') }}</p>
+    </header>
+
+    <div class="stats-container" style="justify-content: center; gap: 30px; margin-bottom: 60px;">
+        <div class="stat-card" style="min-width: 200px;">
+            <h3>{{ t('unique_players') }}</h3>
+            <div class="stat-value">{{ player_count }}</div>
+        </div>
+        <div class="stat-card" style="min-width: 200px;">
+            <h3>{{ t('total_scores') }}</h3>
+            <div class="stat-value">{{ score_count }}</div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 60px;">
+        <form id="searchForm" onsubmit="handleSearch(event)" style="display: inline-block; position: relative;">
+            <input type="text" id="playerSearch" list="player-list" placeholder="{{ t('search_placeholder') }}" 
+                   style="padding: 15px 25px; border-radius: 30px; border: 2px solid var(--osu-pink); background: #25252d; color: white; width: 400px; font-size: 1.1em; outline: none;"
+                   autocomplete="off">
+            <datalist id="player-list">
+                {% for name in all_players %}<option value="{{ name }}">{% endfor %}
+            </datalist>
+            <button type="submit" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--osu-pink); cursor: pointer; font-size: 1.5em;">🔍</button>
+        </form>
+    </div>
+
+    <div style="margin-bottom: 60px;">
+        <h2 style="text-align: center; margin-bottom: 30px;">{{ t('choose_leaderboard') }}</h2>
+        <div class="menu" style="justify-content: center; flex-wrap: wrap; gap: 10px;">
+            {% set main_mods = ['OVERALL', 'NM', 'HD', 'HR', 'DT', 'EZ', 'FL', 'HDDT', 'HDHR', 'HDDTHR'] %}
+            {% for m in main_mods %}
+                <a href="/leaderboard/{{ m }}" style="padding: 15px 25px;">{{ m }}</a>
+            {% endfor %}
+            <a href="/process" style="padding: 15px 25px; border: 1px solid var(--osu-pink); background: rgba(255, 102, 170, 0.1);">{{ t('our_process') }}</a>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 60px;">
+        <h2 style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; text-align: left;">
+            <span class="live-indicator"></span>
+            {{ t('recent_activity') }}
+        </h2>
+        <div style="background: rgba(26, 26, 34, 0.6); border: 1px solid #333; border-radius: 15px; padding: 10px; max-height: 350px; overflow-y: auto;">
+            {% for s in recent_scores %}
+            <div class="log-entry" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #2a2a35;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 30px; display: flex; justify-content: center; flex-shrink: 0;">
+                        <img src="https://a.ppy.sh/{{ s.user_id }}" 
+                             style="width: 30px; height: 30px; border-radius: 4px; border: 1px solid #444;"
+                             onerror="this.src='https://osu.ppy.sh/images/layout/avatar-guest.png';">
+                    </div>
+                    <div class="mods-container" style="min-width: 60px;">
+                        {% set display_mods = s.mods if s.mods else s.category %}
+                        {% if display_mods and display_mods not in ["OVERALL", "NM"] %}
+                            {% for i in range(0, display_mods|length, 2) %}
+                                {% set mod = display_mods[i:i+2]|lower %}
+                                <img src="{{ url_for('static', filename='mods/' + mod + '.png') }}" class="mod-icon" alt="{{ mod }}">
+                            {% endfor %}
+                        {% else %}
+                            <img src="{{ url_for('static', filename='mods/nomod.png') }}" class="mod-icon" alt="NM">
+                        {% endif %}
+                    </div>
+                    <a href="/player/{{ s.user }}" style="color: var(--osu-pink); font-weight: bold; text-decoration: none;">{{ s.user }}</a>
+                    <span class="activity-text" style="color: #eee;">{{ t('set_score_msg') }} 
+                        <a href="https://osu.ppy.sh/b/{{ s.beatmap_id }}" target="_blank" style="color: #66ccff; text-decoration: none;">
+                            {{ s.map[:50] }}{% if s.map|length > 50 %}...{% endif %}
+                        </a>
+                    </span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="color: #00ff88; font-family: monospace; font-weight: bold;">+{{ "%.2f"|format(s.pp) }}pp</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <h2 style="border-bottom: 2px solid var(--osu-pink); padding-bottom: 15px; margin-bottom: 20px; text-align: left;">{{ t('top_10_title') }}</h2>
+    <table style="margin-bottom: 60px; width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="text-align: left; padding: 10px;">PP</th>
+                <th style="text-align: left; padding: 10px;">{{ t('player_header') }}</th> 
+                <th style="text-align: center; padding: 10px;">Mods</th>    
+                <th style="text-align: left; padding: 10px;">{{ t('beatmap') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in top_scores %}
+            <tr class="leaderboard-row" 
+                style="background-image: linear-gradient(to right, 
+                       rgba(26, 26, 34, 1) 0%, 
+                       rgba(26, 26, 34, 0.4) 100%), 
+                    url('https://assets.ppy.sh/beatmaps/{{ s.beatmapset_id if s.beatmapset_id else s.beatmap_id }}/covers/cover@2x.jpg');">
+                <td class="pp" style="font-weight: bold; padding: 15px 10px; text-align: left;">{{ "%.2f"|format(s.pp) }}</td>
+                <td class="user" style="padding: 15px 10px; text-align: left;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 30px; display: flex; justify-content: center; flex-shrink: 0;">
+                            <img src="https://a.ppy.sh/{{ s.user_id }}" 
+                                 style="width: 30px; height: 30px; border-radius: 4px; object-fit: cover;"
+                                 onerror="this.src='https://osu.ppy.sh/images/layout/avatar-guest.png';">
+                        </div>
+                        <a href="/player/{{ s.user }}" style="text-decoration: none; color: white; font-weight: 500;">{{ s.user }}</a>
+                    </div>
+                </td>
+                <td class="mods-container-cell" style="padding: 15px 10px;">
+                    <div class="mods-container" style="justify-content: center; display: flex; gap: 4px;"> 
+                        {% set display_mods = s.mods if s.mods else s.category %}
+                        {% if display_mods and display_mods not in ["OVERALL", "NM"] %}
+                            {% for i in range(0, display_mods|length, 2) %}
+                                {% set mod = display_mods[i:i+2]|lower %}
+                                <img src="{{ url_for('static', filename='mods/' + mod + '.png') }}" class="mod-icon" style="height: 20px;" alt="{{ mod }}">
+                            {% endfor %}
+                        {% else %}
+                            <img src="{{ url_for('static', filename='mods/nomod.png') }}" class="mod-icon" style="height: 20px;" alt="NM">
+                        {% endif %}
+                    </div>
+                </td>
+                <td class="map" style="padding: 15px 10px; text-align: left;">
+                    <a href="https://osu.ppy.sh/b/{{ s.beatmap_id }}" target="_blank" style="text-decoration: none; color: #66ccff;">
+                        {{ s.map }}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+    function handleSearch(event) {
+        event.preventDefault();
+        const query = document.getElementById('playerSearch').value.trim();
+        if (!query) return;
+
+        const options = document.querySelectorAll('#player-list option');
+        const playerNames = Array.from(options).map(opt => opt.value.toLowerCase());
+
+        if (playerNames.includes(query.toLowerCase())) {
+            window.location.href = '/player/' + query;
+        } else {
+            window.location.href = '/leaderboard/OVERALL?q=' + encodeURIComponent(query);
+        }
+    }
+    </script>
+{% endblock %}

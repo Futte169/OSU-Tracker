@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('lang', 'da') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>osu! Specialist Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Animationer */
+        .live-indicator {
+            display: inline-block;
+            width: 10px; height: 10px;
+            background: #00ff88; border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 1; }
+            70% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(0.95); opacity: 1; }
+        }
+
+        /* Nye klasser til sprogvælger for at undgå editor-fejl */
+        .lang-link { 
+            text-decoration: none; 
+            font-weight: bold; 
+            color: #666; 
+            transition: color 0.2s;
+        }
+        .lang-active { 
+            color: #ff66aa !important; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align: right; padding-top: 20px;">
+            <a href="/set_lang/da" class="lang-link {% if session.get('lang') != 'en' %}lang-active{% endif %}">DA</a>
+            <span style="color: #444; margin: 0 5px;">|</span>
+            <a href="/set_lang/en" class="lang-link {% if session.get('lang') == 'en' %}lang-active{% endif %}">EN</a>
+        </div>
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

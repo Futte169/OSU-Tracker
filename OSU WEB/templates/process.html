@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <header style="text-align: center; margin-bottom: 50px; padding-top: 40px;">
+        <a href="/" style="text-decoration: none; color: var(--osu-pink); font-weight: bold;">{{ t('back_to_home') }}</a>
+        <h1 style="font-size: 3em; margin-top: 20px;">{{ t('behind_data') | safe }}</h1>
+        <p style="color: #aaa;">{{ t('process_subtitle') }}</p>
+    </header>
+
+    <div class="flow-container" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 80px; position: relative; padding: 40px; background: rgba(37, 37, 45, 0.4); border-radius: 20px; border: 1px solid #333;">
+        <div class="flow-step" style="text-align: center; flex: 1; z-index: 2;">
+            <div style="font-size: 3em; height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">📥</div>
+            <h4 style="color: var(--osu-pink); margin: 0;">{{ t('step_collection') }}</h4>
+            <p style="font-size: 0.85em; color: #888; margin-top: 5px;">{{ t('step_collection_desc') }}</p>
+        </div>
+        
+        <div style="font-size: 1.5em; color: #444; margin-top: 15px; z-index: 2;">➜</div>
+        
+        <div class="flow-step" style="text-align: center; flex: 1; z-index: 2;">
+            <div style="font-size: 3em; height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">🧼</div>
+            <h4 style="color: var(--osu-pink); margin: 0;">{{ t('step_scrubbing') }}</h4>
+            <p style="font-size: 0.85em; color: #888; margin-top: 5px;">{{ t('step_scrubbing_desc') }}</p>
+        </div>
+        
+        <div style="font-size: 1.5em; color: #444; margin-top: 15px; z-index: 2;">➜</div>
+        
+        <div class="flow-step" style="text-align: center; flex: 1; z-index: 2;">
+            <div style="font-size: 3em; height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">🏆</div>
+            <h4 style="color: var(--osu-pink); margin: 0;">{{ t('step_ranking') }}</h4>
+            <p style="font-size: 0.85em; color: #888; margin-top: 5px;">{{ t('step_ranking_desc') }}</p>
+        </div>
+        
+        <div style="font-size: 1.5em; color: #444; margin-top: 15px; z-index: 2;">➜</div>
+        
+        <div class="flow-step" style="text-align: center; flex: 1; z-index: 2;">
+            <div style="font-size: 3em; height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">🌐</div>
+            <h4 style="color: var(--osu-pink); margin: 0;">{{ t('step_display') }}</h4>
+            <p style="font-size: 0.85em; color: #888; margin-top: 5px;">{{ t('step_display_desc') }}</p>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 60px;">
+        <section style="background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);">
+            <h2 style="color: var(--osu-pink); border-bottom: 1px solid #444; padding-bottom: 10px; margin-top: 0; text-align: center;">{{ t('duplicate_logic') }}</h2>
+            <p style="margin-bottom: 15px; text-align: center;">{{ t('duplicate_logic_desc') }}</p>
+            <code style="display: block; background: #1a1a22; padding: 15px; border-radius: 8px; color: #00ff88; font-family: monospace; margin-bottom: 15px; text-align: center; border: 1px solid #333;">
+                Nøgle = BrugerID + BeatmapID + PP
+            </code>
+            <p style="font-size: 0.9em; color: #aaa; line-height: 1.5; text-align: center;">{{ t('duplicate_logic_note') }}</p>
+        </section>
+
+        <section style="background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center;">
+            <h2 style="color: var(--osu-pink); border-bottom: 1px solid #444; padding-bottom: 10px; margin-top: 0; width: 100%; text-align: center;">{{ t('why_specialist') }}</h2>
+            
+            <p style="margin-bottom: 20px; text-align: center; width: 100%;">{{ t('why_specialist_desc') }}</p>
+            
+            <div style="width: 100%; max-width: 450px;"> <ul style="color: #eee; line-height: 1.6; padding: 0; margin: 0; list-style-position: outside; padding-left: 20px; text-align: left;">
+                    <li style="margin-bottom: 10px;">
+                        <strong>{{ t('mod_dominance') }}:</strong> {{ t('mod_dominance_desc') }}
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <strong>{{ t('map_diversity') }}:</strong> {{ t('map_diversity_desc') }}
+                    </li>
+                    <li style="margin-bottom: 0;">
+                        <strong>{{ t('hist_data') }}:</strong> {{ t('hist_data_desc') }}
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <section style="background: rgba(0, 0, 0, 0.2); padding: 40px; border-radius: 15px; border: 1px solid #333; margin-bottom: 60px; font-size: 0.9em; color: #888;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div>
+                <h3 style="color: #aaa; margin-top: 0;">{{ t('legal_info') }}</h3>
+                <p>{{ t('legal_info_desc') | safe }}</p>
+                <p>{{ t('legal_accuracy') }}</p>
+            </div>
+            <div>
+                <h3 style="color: #aaa; margin-top: 0;">{{ t('copyright_license') }}</h3>
+                <p>{{ t('copyright_desc') | safe }}</p>
+                <p>&copy; 2025 osu! Specialist Bank. Udviklet med ❤️ til fællesskabet.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 40px; color: #555; border-top: 1px solid #333;">
+        <p>{{ t('auto_update_msg') }}</p>
+    </footer>
+
+    <style>
+        .flow-step { transition: transform 0.3s ease; cursor: default; }
+        .flow-step:hover { transform: translateY(-10px); }
+    </style>
+{% endblock %}
