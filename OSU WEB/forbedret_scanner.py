@@ -6,8 +6,8 @@ import os
 # ==============================
 # CONFIG
 # ==============================
-CLIENT_ID = "47037"
-CLIENT_SECRET = "DeClDWWlyMr21eXmWtNHQwMiGcsUC8digo2sQjeY"
+CLIENT_ID = ""
+CLIENT_SECRET = ""
 MODE = "osu"
 TOP_PLAYERS_TO_SCAN = 1000 
 SLEEP = 0.1 
